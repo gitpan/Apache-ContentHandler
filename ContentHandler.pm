@@ -7,31 +7,31 @@ generation.
 
 =head1 SYNOPSIS
 
-use Apache::ContentHandler;
+    use Apache::ContentHandler;
 
-@ISA = 'Apache::ContentHandler';
+    @ISA = 'Apache::ContentHandler';
 
-sub handler {
-  my $r = shift;
-  my $algometer = new Apache::Algometer($r);
-  my $result = $algometer->run;
-  return $result;
-}
+    sub handler {
+      my $r = shift;
+      my $algometer = new Apache::Algometer($r);
+      my $result = $algometer->run;
+      return $result;
+    }
 
-sub _init {
-  my $self = shift || die 'need $self';
-  $self->SUPER::_init(@_);
+    sub _init {
+      my $self = shift || die 'need $self';
+      $self->SUPER::_init(@_);
 
-  # overrides
-  $self->{title}     = 'Project Algometer';
-  $self->{subtitle}  = "Version $VERSION";
-  $self->{default_action} = 'hello';
-  # other variable definitions
-}
+      # overrides
+      $self->{title}     = 'Project Algometer';
+      $self->{subtitle}  = "Version $VERSION";
+      $self->{default_action} = 'hello';
+      # other variable definitions
+    }
 
-sub hello {
-  return '<P>Hello World</P>';
-}
+    sub hello {
+      return '<P>Hello World</P>';
+    }
 
 =head1 DESCRIPTION
 
@@ -39,9 +39,39 @@ Apache::ContentHandler is a generic framework for creating mod_perl
 based applications. It provides a basic event mechanism and a
 subclassable framework for customizing actions.
 
-=head1 AUTHOR
+The synopsis shows a very simple example of what it can do. In this
+case, we set the default_action to 'hello', which is automatically
+executed. Hello in this case outputs a simple paragraph. Nothing big,
+but it is very simple. Note that this app runs as-is in both CGI and
+mod_perl.
 
-Ryan Davis, Zen Spider Software <ryand-ch@zenspider.com>
+=head2 Rapid Prototyping
+
+This does not demonstrate the real power of ContentHandler. The real
+power comes from rapid prototyping. For example, if we modifed the
+example above to read:
+
+    sub hello {
+      my $self = shift || die 'need $self';
+      my $s = '';
+      $s .= '\<A HREF="$self-\>{url}?action=make"\>Make\</A\> something.';
+      return $s;
+    }
+
+Then the page will output a url for the application that includes
+"action=make" as a url parameter. This will tell ContentHandler to run
+the method make when executed. But, 'make' does not exist at this
+time. That is ok, because ContentHandler will deal with it by putting
+a standard page up explaining that that feature is not yet
+implemented. This allows you to quickly prototype one page, and move
+on to the rest of the functionality one piece at a time.
+
+I have used this style with clients on several different projects and
+they were all extremely happy to get something tangible in a very
+short period of time, usually 5 minutes to get the first page up and
+running with skeletal functionality. From there, it is a very
+interactive process with the client driving on one machine and
+commenting, and me coding away at another machine as they talk.
 
 =head1 PUBLIC METHODS
 
@@ -57,7 +87,7 @@ use Mail::Mailer;
 use CGI qw(:html2 :html3 :form param url *table);
 local $^W = 1;
 
-$VERSION = '1.3.2';
+$VERSION = '1.3.3';
 
 =item * $ch = Apache::ContentHandler->new
 
@@ -554,4 +584,35 @@ __END__
 
 =back
 
+=head1 LICENSE
+
+(The MIT License)
+
+Copyright (c) 2001 Ryan Davis, Zen Spider Software
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+=head1 AUTHOR
+
+Ryan Davis <ryand-ch@zenspider.com>
+Zen Spider Software <http://www.zenspider.com/ZSS/>
+
 =cut
+
